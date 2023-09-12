@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Socket.IO Chat</title>
+</head>
+<body>
+    <ul id="messages"></ul>
+    <form id="form" action="">
+        <input id="input" autocomplete="off" /><button>Send</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(function () {
+            var socket = io();
+            var $form = $('#form');
+            var $input = $('#input');
+            var $messages = $('#messages');
+// Connect to the private chat namespace
+var privateSocket = io('/private-chat');
+
+// Submit form to send private message
+$form.submit(function () {
+    var message = $input.val();
+    var recipient = 'socket.id';  // Replace with the recipient's socket ID
+    privateSocket.emit('private message', { message, recipient });
+    $input.val('');
+    return false;
+});
+
+// Listen for private messages
+privateSocket.on('private message', function (msg) {
+    $messages.append($('<li>').text(msg));
+});
+
+});
+    </script>
+</body>
+</html>
